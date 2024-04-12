@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\Category\IndexResource;
+use App\Http\Resources\Category\ShowResource;
 
 class CategoryController extends Controller
 {
@@ -14,15 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return IndexResource::collection(Category::all());
     }
 
     /**
@@ -30,7 +24,14 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        $category = new Category();
+        $category->title = $request->input('title');
+        if($request->has('description')) {
+            $category->description = $request->input('description');
+        }
+        $category->save();
+
+        return new ShowResource($category);
     }
 
     /**
@@ -38,15 +39,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
-    {
-        //
+        return new ShowResource($category);
     }
 
     /**
@@ -54,7 +47,17 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        if($request->has('title')) {
+            $category->title = $request->input('title');
+        }
+
+        if($request->has('description')) {
+            $category->description = $request->input('description');
+        }
+
+        $category->save();
+
+        return new ShowResource($category);
     }
 
     /**
@@ -62,6 +65,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return response()->noContent();
     }
 }
