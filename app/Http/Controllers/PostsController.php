@@ -6,23 +6,23 @@ use App\Models\Posts;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostsRequest;
 use App\Http\Requests\UpdatePostsRequest;
+use App\Http\Resources\Post\IndexResource;
+use App\Http\Resources\Post\ShowResource;
+use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+       if($request->input('category') != null) {
+            $posts = Posts::where('category_id', $request->input('category'))->paginate(10);
+            return IndexResource::collection($posts);
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return IndexResource::collection(Posts::paginate(10));
     }
 
     /**
@@ -30,7 +30,20 @@ class PostsController extends Controller
      */
     public function store(StorePostsRequest $request)
     {
-        //
+        $post = new Posts();
+        $post->category_id = $request->input('category');
+        $post->user_id = $request->user()->id;
+        $post ->title = $request->input('title');
+        if($request->input('thumbnail') != null) {
+            $post->thumbnail = $request->input('thumbnail');
+        }
+        if($request->input('content') != null) {
+            $post->content = $request->input('content');
+        }
+        $post->status = $request->input('status') ? Posts::STATUS[$request->input('status')] : 1;
+        $post->save();
+
+        return new ShowResource($post);
     }
 
     /**
@@ -38,15 +51,7 @@ class PostsController extends Controller
      */
     public function show(Posts $posts)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Posts $posts)
-    {
-        //
+        return new ShowResource($posts);
     }
 
     /**
@@ -54,7 +59,29 @@ class PostsController extends Controller
      */
     public function update(UpdatePostsRequest $request, Posts $posts)
     {
-        //
+        if($request->has('category')) {
+            $posts->category_id = $request->input('category');
+        }
+
+        if($request->has('title')) {
+            $posts->title = $request->input('title');
+        }
+
+        if($request->has('thumbnail')) {
+            $posts->thumbnail = $request->input('thumbnail');
+        }
+
+        if($request->has('content')) {
+            $posts->content = $request->input('content');
+        }
+
+        if($request->has('status')) {
+            $posts->status = Posts::STATUS[$request->input('status')];
+        }
+
+        $posts->save();
+
+        return new ShowResource($posts);
     }
 
     /**
@@ -62,6 +89,8 @@ class PostsController extends Controller
      */
     public function destroy(Posts $posts)
     {
-        //
+        $posts->delete();
+
+        return response()->noContent();
     }
 }

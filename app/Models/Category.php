@@ -12,8 +12,8 @@ class Category extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public function posts():HasMany
+    public function posts()
     {
-        return $this->hasMany(Posts::class);
+        return $this->hasMany(Posts::class)->get();
     }
 }

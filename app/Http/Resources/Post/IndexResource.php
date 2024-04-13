@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Category;
+namespace App\Http\Resources\Post;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShowResource extends JsonResource
+class IndexResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,13 @@ class ShowResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'category' => $this->category(),
+            'author' => $this->user(),
             'title' => $this->title,
-            'description' => $this->description,
-            'posts' => $this->posts()->get(),
-            'created_at' => $this->created_at,
-            'deleted_at' => $this->deleted_at
+            'thumbnail' => $this->thumbnail,
+            'content' => $this->content,
+            'status' => $this->status,
+            'created_at' => $this->created_at
         ];
     }
 }

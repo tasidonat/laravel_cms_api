@@ -10,4 +10,9 @@ class Comment extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    public function post()
+    {
+        return $this->belongsTo(Posts::class)->first();
+    }
 }

@@ -11,7 +11,7 @@ class UpdatePostsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdatePostsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'category' => 'exists:categories,id',
+            'title' => 'unique:posts|min:5|max:255',
+            'thumbnail' => 'url',
+            'content' => 'min:10',
         ];
     }
 }
