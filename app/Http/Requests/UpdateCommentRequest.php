@@ -11,7 +11,7 @@ class UpdateCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'post' => 'exists:posts,id',
+            'name' => 'min:4',
+            'email' => 'email',
+            'content' => 'min:4',
+            'status' => 'min:0|max:100'
         ];
     }
 }

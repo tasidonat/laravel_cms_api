@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Posts;
+use App\Models\Post;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePostsRequest;
-use App\Http\Requests\UpdatePostsRequest;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\Post\IndexResource;
 use App\Http\Resources\Post\ShowResource;
 use Illuminate\Http\Request;
 
-class PostsController extends Controller
+class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,19 +18,19 @@ class PostsController extends Controller
     public function index(Request $request)
     {
        if($request->input('category') != null) {
-            $posts = Posts::where('category_id', $request->input('category'))->paginate(10);
+            $posts = Post::where('category_id', $request->input('category'))->paginate(10);
             return IndexResource::collection($posts);
         }
 
-        return IndexResource::collection(Posts::paginate(10));
+        return IndexResource::collection(Post::paginate(10));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostsRequest $request)
+    public function store(StorePostRequest $request)
     {
-        $post = new Posts();
+        $post = new Post();
         $post->category_id = $request->input('category');
         $post->user_id = $request->user()->id;
         $post ->title = $request->input('title');
@@ -40,7 +40,7 @@ class PostsController extends Controller
         if($request->input('content') != null) {
             $post->content = $request->input('content');
         }
-        $post->status = $request->input('status') ? Posts::STATUS[$request->input('status')] : 1;
+        $post->status = $request->input('status') ? Post::STATUS[$request->input('status')] : 1;
         $post->save();
 
         return new ShowResource($post);
@@ -49,7 +49,7 @@ class PostsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Posts $posts)
+    public function show(Post $posts)
     {
         return new ShowResource($posts);
     }
@@ -57,7 +57,7 @@ class PostsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostsRequest $request, Posts $posts)
+    public function update(UpdatePostRequest $request, Post $posts)
     {
         if($request->has('category')) {
             $posts->category_id = $request->input('category');
@@ -76,7 +76,7 @@ class PostsController extends Controller
         }
 
         if($request->has('status')) {
-            $posts->status = Posts::STATUS[$request->input('status')];
+            $posts->status = Post::STATUS[$request->input('status')];
         }
 
         $posts->save();
@@ -87,7 +87,7 @@ class PostsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Posts $posts)
+    public function destroy(Post $posts)
     {
         $posts->delete();
 
