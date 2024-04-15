@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('post_id');
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->text('content');
             $table->integer('status');
             $table->timestamps();

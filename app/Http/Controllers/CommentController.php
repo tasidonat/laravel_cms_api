@@ -6,6 +6,8 @@ use App\Models\Comment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Resources\Comment\IndexResource;
+use App\Http\Resources\Comment\ShowResource;
 
 class CommentController extends Controller
 {
@@ -14,15 +16,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return IndexResource::collection(Comment::paginate(25));
     }
 
     /**
@@ -30,7 +24,15 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        //
+        $comment = new Comment();
+        $comment->post_id = $request->input('post');
+        $comment->name = $request->input('name');
+        $comment->email = $request->input('email');
+        $comment->content = $request->input('content');
+        $comment->status = 0;
+        $comment->save();
+
+        return new ShowResource($comment);
     }
 
     /**
@@ -38,15 +40,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Comment $comment)
-    {
-        //
+        return new ShowResource($comment);
     }
 
     /**
@@ -54,7 +48,29 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, Comment $comment)
     {
-        //
+        if($request->has('post')) {
+            $comment->post_id = $request->input('post');
+        }
+
+        if($request->has('name')) {
+            $comment->name = $request->input('name');
+        }
+
+        if($request->has('email')) {
+            $comment->email = $request->input('email');
+        }
+
+        if($request->has('content')) {
+            $comment->content = $request->input('content');
+        }
+
+        if($request->has('status')) {
+            $comment->status = Comment::STATUS[$request->input('status')];
+        }
+    
+        $comment->save();
+
+        return new ShowResource($comment);
     }
 
     /**
@@ -62,6 +78,8 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $comment->delete();
+
+        return response()->noContent();
     }
 }
