@@ -11,14 +11,8 @@ class Comment extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public const STATUS = [
-        'approved' => 100,
-        'denied' => 50,
-        'pendding' => 0
-    ];
-
     public function post()
     {
-        return $this->belongsTo(Post::class)->get();
+        return $this->belongsTo(Posts::class)->first();
     }
 }
