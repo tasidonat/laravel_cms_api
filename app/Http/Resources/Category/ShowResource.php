@@ -18,7 +18,7 @@ class ShowResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'posts' => $this->posts()->get(),
+            'posts' => $this->posts,
             'created_at' => $this->created_at,
             'deleted_at' => $this->deleted_at
         ];

@@ -18,18 +18,18 @@ class Posts extends Model
         'draft' => 1
     ];
 
-    public function category()
+    public function category():BelongsTo
     {
-        return $this->belongsTo(Category::class)->first();
+        return $this->belongsTo(Category::class);
     }
 
-    public function user()
+    public function user():BelongsTo
     {
-        return $this->belongsTo(User::class)->first();
+        return $this->belongsTo(User::class);
     }
 
-    public function comments()
+    public function comments():HasMany
     {
-        return $this->hasMany(Comment::class)->get();
+        return $this->hasMany(Comment::class);
     }
 }

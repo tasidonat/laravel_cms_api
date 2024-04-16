@@ -22,7 +22,7 @@ class ShowResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'post' => $this->post(),
+            'post' => $this->post,
             'name' => $this->name,
             'email' => $this->email,
             'content' => $this->content,

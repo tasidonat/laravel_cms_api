@@ -8,7 +8,11 @@ use App\Http\Requests\StorePostsRequest;
 use App\Http\Requests\UpdatePostsRequest;
 use App\Http\Resources\Post\IndexResource;
 use App\Http\Resources\Post\ShowResource;
+use Fouladgar\EloquentBuilder\EloquentBuilder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
 
 class PostsController extends Controller
 {
@@ -17,12 +21,19 @@ class PostsController extends Controller
      */
     public function index(Request $request)
     {
-       if($request->input('category') != null) {
-            $posts = Posts::where('category_id', $request->input('category'))->paginate(10);
-            return IndexResource::collection($posts);
+        if(!auth('sanctum')->check()) {
+            if($request->input('category') != null) {
+                 $posts = Posts::where('category_id', $request->input('category'))->where('status', 100)->paginate(10);
+                 return IndexResource::collection($posts);
+             }
+
+             return IndexResource::collection(Posts::where('status', 100)->paginate(15));
+        } else {
+            return IndexResource::collection(Posts::paginate(15));
         }
 
-        return IndexResource::collection(Posts::paginate(10));
+
+
     }
 
     /**
